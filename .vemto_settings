@@ -1,0 +1,7 @@
+SCHEMA_READER_MODE=migration
+SCHEMA_READER_DB_DRIVER=pgsql
+SCHEMA_READER_DB_HOST=aws-0-ap-southeast-1.pooler.supabase.com
+SCHEMA_READER_DB_PORT=5432
+SCHEMA_READER_DB_USERNAME=postgres.qmvtvpelsyemhepiqyte
+SCHEMA_READER_DB_PASSWORD=VUfw92pdkeMy5xJh
+SCHEMA_READER_DB_DATABASE=vemto_schema_reader
