@@ -4,18 +4,22 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PackageResource\Pages;
 use App\Models\Package;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class PackageResource extends Resource
 {
@@ -40,22 +44,31 @@ class PackageResource extends Resource
             ->schema([
                 Placeholder::make('created_at')
                     ->label('Created Date')
-                    ->content(fn (?Package $record): string => $record?->created_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?Package $record): string => $record?->created_at?->diffForHumans() ?? '-'),
 
                 Placeholder::make('updated_at')
                     ->label('Last Modified Date')
-                    ->content(fn (?Package $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?Package $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
 
                 TextInput::make('judul_package')
                     ->required()
                     ->label('Judul Package')
-                    ->afterStateUpdated(),
+                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+
+                TextInput::make('deskripsi')
+                    ->required()
+                    ->label('Deskripsi Package')
+                    ->helperText('Buatkan penjelasan terkait konten Packages yang akan di tayangkan di depan landing page'),
 
                 TextInput::make('slug')
-                    ->required(),
+                    ->required()
+                    ->dehydrated()
+                    ->label('Slug'),
 
-                TextInput::make('gambar')
-                    ->required(),
+                FileUpload::make('gambar')
+                    ->required()
+                    ->image()
+                    ->imageEditor(),
             ]);
     }
 
@@ -63,13 +76,18 @@ class PackageResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('judul_package'),
-
+                TextColumn::make('judul_package')
+                    ->searchable()
+                    ->label('Nama Package')
+                    ->sortable(),
                 TextColumn::make('slug')
+                    ->label('Slug')
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('gambar'),
+                ImageColumn::make('gambar')
+                    ->label('Gambar')
+                    ->circular(),
             ])
             ->filters([
                 //

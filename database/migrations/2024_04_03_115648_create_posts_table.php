@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('slug');
             $table->text('deskripsi');
             $table->longText('gambar');
+            $table->string('date_released');
 
             $table->foreignIdFor(User::class)->constrained('users');
             $table->foreignIdFor(Category::class)->constrained('categories');

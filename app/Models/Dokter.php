@@ -14,6 +14,7 @@ class Dokter extends Authenticable implements FilamentUser
         if ($panel->getId() === 'dokter') {
             return str_ends_with($this->email, '@dokter.com') && $this->hasVerifiedEmail();
         }
+
         return true;
     }
 

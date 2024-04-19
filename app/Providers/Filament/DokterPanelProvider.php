@@ -25,6 +25,8 @@ class DokterPanelProvider extends PanelProvider
         return $panel
             ->id('dokter')
             ->registration()
+            ->spa()
+            ->brandName('Dokter')
             ->passwordReset()
             ->login()
             ->path('dokter')

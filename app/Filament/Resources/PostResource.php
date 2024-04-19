@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
 use App\Models\Post;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
@@ -54,11 +55,12 @@ class PostResource extends Resource
                                 TextInput::make('judul_post')
                                     ->required()
                                     ->live(true, 5)
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
-                                    ->label('Judul'),
+                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                                    ->label('Judul Post'),
                                 TextInput::make('slug')
                                     ->label('Slug')
                                     ->disabled()
+                                    ->helperText('Slug akan otomatis di generate sama dengan judul yang anda buat diatas')
                                     ->dehydrated()
                                     ->required(),
                             ]),
@@ -66,6 +68,10 @@ class PostResource extends Resource
                                 ->required()
                                 ->label('Deskripsi'),
                         ]),
+                        DatePicker::make('date_released')
+                            ->required()
+                            ->label('Tanggal Rilis Post')
+                            ->minDate(now()),
                     ]),
                 Group::make([
                     Section::make([
@@ -89,7 +95,7 @@ class PostResource extends Resource
                                                 ->label('Title')
                                                 ->required()
                                                 ->live(true, 5)
-                                                ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
                                             TextInput::make('slug')
                                                 ->label('Slug')
                                                 ->dehydrated()
@@ -108,7 +114,7 @@ class PostResource extends Resource
                                                 ->label('Tag Title')
                                                 ->required()
                                                 ->live(true, 5)
-                                                ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
                                             TextInput::make('slug')
                                                 ->label('Slug')
                                                 ->required(),
@@ -118,7 +124,6 @@ class PostResource extends Resource
                     ]),
                     Section::make([
                         FileUpload::make('gambar')
-                            ->disk('s3')
                             ->required()
                             ->preserveFilenames()
                             ->image()
@@ -127,11 +132,11 @@ class PostResource extends Resource
                 ]),
                 Placeholder::make('created_at')
                     ->label('Created Date')
-                    ->content(fn (?Post $record): string => $record?->created_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?Post $record): string => $record?->created_at?->diffForHumans() ?? '-'),
 
                 Placeholder::make('updated_at')
                     ->label('Last Modified Date')
-                    ->content(fn (?Post $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?Post $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
             ]);
     }
 
@@ -162,6 +167,16 @@ class PostResource extends Resource
                 ImageColumn::make('gambar')
                     ->circular()
                     ->label('Gambar'),
+
+                TextColumn::make('date_released')
+                    ->label('Dirilis Pada'),
+
+                TextColumn::make('created_at')
+                    ->label('Dibuat pada'),
+
+                TextColumn::make('updated_at')
+                    ->label('di Update pada')
+                    ->since(),
             ])
             ->filters([
                 //

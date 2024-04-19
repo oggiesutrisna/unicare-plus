@@ -43,14 +43,14 @@ class AdminPanelProvider extends PanelProvider
                     ->group('Links'),
             ])
             ->navigationItems([
-                NavigationItem::make('Professional Wrestling')
+                NavigationItem::make('Established')
                     ->url('https://oggiesutrisna.vercel.app')
                     ->icon('heroicon-o-user')
                     ->label('Established By: Oggie Sutrisna'),
             ])
             ->path('admin')
             ->registration()
-            ->brandName('Unicare Panels')
+            ->brandName('Unicare Plus')
             ->spa()
             ->font('Poppins')
             ->login()
