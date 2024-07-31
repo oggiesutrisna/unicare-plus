@@ -12,6 +12,7 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -78,6 +79,7 @@ class PostResource extends Resource
                         Select::make('user_id')
                             ->label('Choose Your Creator')
                             ->relationship('user', 'name')
+                            ->default(fn() => auth()->id())
                             ->required(),
                     ]),
                     Section::make([
@@ -110,14 +112,21 @@ class PostResource extends Resource
                                     ->relationship('tag', 'judul_tag')
                                     ->createOptionForm([
                                         Section::make([
-                                            TextInput::make('judul_tag')
+                                            TagsInput::make('judul_tag')
                                                 ->label('Tag Title')
+                                                ->separator(',')
                                                 ->required()
+                                                ->suggestions([
+                                                    'professional',
+                                                    'wrestling',
+                                                    'gaming',
+                                                    'coding',
+                                                    'laravel',
+                                                    'php',
+                                                    'dota',
+                                                ])
                                                 ->live(true, 5)
                                                 ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
-                                            TextInput::make('slug')
-                                                ->label('Slug')
-                                                ->required(),
                                         ]),
                                     ]),
                             ]),

@@ -12,7 +12,10 @@ class Tag extends Model
 
     protected $fillable = [
         'judul_tag',
-        'slug',
+    ];
+
+    protected $casts = [
+        'judul_tag' => 'array',
     ];
 
     public function posts(): BelongsToMany

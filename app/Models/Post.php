@@ -17,6 +17,10 @@ class Post extends Model
         'gambar',
     ];
 
+    protected $casts = [
+        'tag_id' => 'array',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
