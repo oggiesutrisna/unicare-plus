@@ -4,12 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
 use App\Models\Post;
+use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -49,103 +51,27 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                Group::make()
+                Section::make('Title and Slug')
                     ->schema([
-                        Section::make([
-                            Grid::make(2)->schema([
-                                TextInput::make('judul_post')
-                                    ->required()
-                                    ->live(true, 5)
+                        \Filament\Forms\Components\Builder::make('Insert')
+                            ->schema([
+                                TextInput::make('title')
+                                    ->label('Title')
+                                    ->live()
                                     ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state)))
-                                    ->label('Judul Post'),
+                                    ->required(),
                                 TextInput::make('slug')
                                     ->label('Slug')
-                                    ->disabled()
-                                    ->helperText('Slug akan otomatis di generate sama dengan judul yang anda buat diatas')
-                                    ->dehydrated()
+                                    ->debounce(1000)
                                     ->required(),
-                            ]),
-                            MarkdownEditor::make('deskripsi')
-                                ->required()
-                                ->label('Deskripsi'),
-                        ]),
-                        DatePicker::make('date_released')
-                            ->required()
-                            ->label('Tanggal Rilis Post')
-                            ->minDate(now()),
-                    ]),
-                Group::make([
-                    Section::make([
-                        Select::make('user_id')
-                            ->label('Choose Your Creator')
-                            ->relationship('user', 'name')
-                            ->default(fn() => auth()->id())
-                            ->required(),
-                    ]),
-                    Section::make([
-                        Grid::make('Categories and Tags')
-                            ->columns(2)
-                            ->schema([
-                                Select::make('category_id')
-                                    ->label('Categories')
-                                    ->required()
-                                    ->preload()
-                                    ->relationship('category', 'judul_kategori')
-                                    ->createOptionForm([
-                                        Section::make([
-                                            TextInput::make('judul_kategori')
-                                                ->label('Title')
-                                                ->required()
-                                                ->live(true, 5)
-                                                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
-                                            TextInput::make('slug')
-                                                ->label('Slug')
-                                                ->dehydrated()
-                                                ->disabled()
-                                                ->required(),
-                                        ]),
-                                    ]),
-                                Select::make('tag_id')
-                                    ->label('Tags')
-                                    ->required()
-                                    ->preload()
-                                    ->relationship('tag', 'judul_tag')
-                                    ->createOptionForm([
-                                        Section::make([
-                                            TagsInput::make('judul_tag')
-                                                ->label('Tag Title')
-                                                ->separator(',')
-                                                ->required()
-                                                ->suggestions([
-                                                    'professional',
-                                                    'wrestling',
-                                                    'gaming',
-                                                    'coding',
-                                                    'laravel',
-                                                    'php',
-                                                    'dota',
-                                                ])
-                                                ->live(true, 5)
-                                                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
-                                        ]),
-                                    ]),
+                            ])
+                            ->blocks([
+                                Block::make('Titles and Slugs')
+                                    ->schema([
+                                        //
+                                    ])
                             ]),
                     ]),
-                    Section::make([
-                        FileUpload::make('gambar')
-                            ->required()
-                            ->preserveFilenames()
-                            ->image()
-                            ->imageEditor(),
-                    ]),
-                ]),
-                Placeholder::make('created_at')
-                    ->label('Created Date')
-                    ->content(fn(?Post $record): string => $record?->created_at?->diffForHumans() ?? '-'),
-
-                Placeholder::make('updated_at')
-                    ->label('Last Modified Date')
-                    ->content(fn(?Post $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
             ]);
     }
 
